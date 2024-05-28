@@ -36,7 +36,8 @@ public class Users implements Serializable {
     private String DNIUsuario;
     @Column(name ="direccionUsuario", nullable = true, length = 45)
     private String direccionUsuario;
-
+    @Column(name ="estadoUsuario", nullable = true, length = 45)
+    private String estadoUsuario;
 
 
     public Long getId() {
