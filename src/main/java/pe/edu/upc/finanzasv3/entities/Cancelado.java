@@ -3,9 +3,9 @@ package pe.edu.upc.finanzasv3.entities;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
-public class Users {
+@Table(name = "Cancelado")
+public class Cancelado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int idCancelado;
 }
