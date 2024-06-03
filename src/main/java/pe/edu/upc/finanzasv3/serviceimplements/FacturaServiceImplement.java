@@ -3,6 +3,7 @@ package pe.edu.upc.finanzasv3.serviceimplements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pe.edu.upc.finanzasv3.dtos.ListaFacturaAminDTO;
+import pe.edu.upc.finanzasv3.entities.Factura;
 import pe.edu.upc.finanzasv3.repositories.IFacturaRepository;
 import pe.edu.upc.finanzasv3.serviceinterface.IFacturaService;
 
@@ -42,5 +43,10 @@ public class FacturaServiceImplement implements IFacturaService {
     @Override
     public List<String[]> FiltroPorEstadolistarFacturaPersonalizadaCliente(Long idUsuario, String estado) {
         return facturaR.FiltroPorEstadolistarFacturaPersonalizadaCliente(idUsuario, estado);
+    }
+
+    @Override
+    public void insert(Factura factura) {
+        facturaR.save(factura);
     }
 }

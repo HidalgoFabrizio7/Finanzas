@@ -18,4 +18,11 @@ public class UsersServiceImplement implements IUsersService {
     public List<Users> ListCliente() {
         return userR.ListCliente();
     }
+
+    @Override
+    public void insert(Users users) {
+        userR.save(users);
+    }
+
+
 }

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface IUsersService {
     public List<Users> ListCliente();
+    public void insert(Users users);
 }
