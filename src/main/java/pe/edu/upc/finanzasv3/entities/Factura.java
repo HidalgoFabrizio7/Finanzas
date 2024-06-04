@@ -3,6 +3,7 @@ package pe.edu.upc.finanzasv3.entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Factura")
@@ -151,4 +152,32 @@ public class Factura {
     public void setUser(Users user) {
         this.user = user;
     }
+
+    //calculos
+    private float calcularTasaSimple(){
+        float r;
+        r = montoPrestamo*(1+(tasa/100))*plazoPago+0;
+        return r;
+    }
+    private double calcularTasaEfectivaDelPerido(){
+        double r;
+        double a=1+(tasa/100);
+        double b=plazoPago/periodoTasa;
+        r = montoPrestamo*Math.pow(a,b);
+
+        return r;
+    }
+
+    private double calcularAnualidad(String tipoAnualidad){
+        if (Objects.equals(tipoAnualidad, "anualidadSimple")){}
+        double ra =0;
+        double  NperiodoRenta = Math.floor((double) plazoPago /7);
+        ra = montoPrestamo * (
+                ((tasa/100)*(Math.pow((1+(tasa/100)), NperiodoRenta-1)))/
+                        ((Math.pow((1+(tasa/100)),NperiodoRenta))-1)
+        );
+        return ra;
+    }
+
+
 }
