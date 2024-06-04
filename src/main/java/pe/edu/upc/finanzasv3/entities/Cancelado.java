@@ -20,6 +20,8 @@ public class Cancelado {
     private LocalDate fechaCancelado;
     @Column(name = "interesMoratorio", nullable = true  )
     private float interesMoratorio;
+    @Column(name = "deudaRestante", nullable = true  )
+    private float deudaRestante;
 
     @ManyToOne
     @JoinColumn(name = "idFactura")
@@ -28,12 +30,13 @@ public class Cancelado {
     public Cancelado() {
     }
 
-    public Cancelado(int idCancelado, float montoCancelado, float interes, LocalDate fechaCancelado, float interesMoratorio, Factura factura) {
+    public Cancelado(int idCancelado, float montoCancelado, float interes, LocalDate fechaCancelado, float interesMoratorio, float deudaRestante, Factura factura) {
         this.idCancelado = idCancelado;
         this.montoCancelado = montoCancelado;
         this.interes = interes;
         this.fechaCancelado = fechaCancelado;
         this.interesMoratorio = interesMoratorio;
+        this.deudaRestante = deudaRestante;
         this.factura = factura;
     }
 
@@ -98,74 +101,32 @@ public class Cancelado {
     private void calcularDeuda(){
         double capital = factura.getMontoPrestamo();
         double tasa = factura.getTasa()/100;
+        double tasaM = factura.getTasaMoratoria()/100;
         double tiempo = calcularDiasTranscurridos();
         float deuda = factura.getDeudaPendiente();
-        if (factura.getPlazoPago()-calcularDiasTranscurridos()<0) {
-            factura.setDeudaPendiente((float) (deuda+calculoDeMora(capital, tasa, tiempo)));
+        if ((factura.getPlazoPago()-calcularDiasTranscurridos())<0) {
+            deuda = deuda + (float) (calculoDeMora(capital, tasaM, tiempo));
+        }else {
+            if (Objects.equals(factura.getTipoTasa(), "Tasa efectiva del periodo")){
+                deuda = (float) calcularTasaEfectivaDelPeriodo(capital, tasa, tiempo);
+            }
         }
-        if (Objects.equals(factura.getTipoTasa(), "Tasa efectiva del periodo")){
-            factura.setDeudaPendiente(0);
-            deuda = (float) calcularTasaEfectivaDelPeriodo(capital,tasa,tiempo);
-            factura.setDeudaPendiente(deuda);
+        if (Objects.equals(factura.getTipoTasa(), "Anualidad simple adelantada")||
+                Objects.equals(factura.getTipoTasa(), "Anualidad simple vencida")){
+            factura.setPeriodoActual(factura.getPeriodoActual()+1);
         }
-        deuda = factura.getDeudaPendiente();
-        deuda = deuda - montoCancelado;
         factura.setDeudaPendiente(deuda);
+        deuda = deuda - montoCancelado;
+        deudaRestante = deuda;
     }
 
-    private void calcularValorFuturo(float deuda){
-        double valorFuturo = 0;
-        double capital = factura.getMontoPrestamo();
-        double tasa = factura.getTasa()/100;
-        double tiempo = calcularDiasTranscurridos();
-        double plazoPago = factura.getPlazoPago();
-        switch (factura.getTipoTasa()) {
-            case "Tasa de Interes Simple":
-                valorFuturo = deuda+calculoDeMora(capital, tasa, tiempo);
-                break;
-            case "Tasa efectiva del periodo":
-                valorFuturo = deuda+calculoDeMora(capital, tasa, tiempo);
-                break;
-
-        }
-    }
-
-    private double ValorFuturo(){
-        double valorFuturo = 0;
-        double capital = factura.getMontoPrestamo();
-        double tasa = factura.getTasa()/100;
-        double tiempo = calcularDiasTranscurridos();
-        double plazoPago = factura.getPlazoPago();
-
-        switch (factura.getTipoTasa()) {
-            case "Tasa de Interes Simple":
-                valorFuturo = valorFuturo + calcularTasaSimple(capital, tasa, tiempo);
-                break;
-            case "Tasa efectiva del periodo":
-                valorFuturo =valorFuturo + calcularTasaEfectivaDelPeriodo(capital, tasa, tiempo);
-                break;
-            case "Anualidad Simple Adelantada":
-                valorFuturo =valorFuturo + calcularAnualidadSimpleAdelantada(capital, tasa, tiempo);
-                break;
-            case "Anualidad Simple vencida":
-                valorFuturo =valorFuturo + calcularAnualidadSimpleVencida(capital, tasa, tiempo);
-                break;
-        }
-
-        return valorFuturo;
-    }
-
+    /////////
     private double calculoDeMora(double capital, double tasa, double tiempo){
         double mora = 0;
         double a = (1+(tasa));
-        double b = tiempo-factura.getPlazoPago()/factura.getPeriodoTasa();
+        double b = (tiempo-factura.getPlazoPago())/factura.getPeriodoTasa();
         mora = capital*(Math.pow(a, b)-1);
         return mora;
-    }
-    private double calcularTasaSimple(double capital, double tasa, double tiempo){
-        double r;
-        r = capital*(1+(tasa)*tiempo);
-        return r;
     }
 
     private double calcularTasaEfectivaDelPeriodo(double capital, double tasa, double tiempo){
