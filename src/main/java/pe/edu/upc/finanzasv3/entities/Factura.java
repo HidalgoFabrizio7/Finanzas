@@ -32,6 +32,8 @@ public class Factura {
     //este dato ira cambiando por la cantidad de cancelaciones
     @Column(name = "deudaPendiente", nullable = true  )
     private float deudaPendiente;
+    @Column(name = "periodoActual", nullable = true  )
+    private int periodoActual;
     @Column(name = "responsableFactura", nullable = true, length = 45)
     private String responsableFactura;
 
@@ -40,9 +42,10 @@ public class Factura {
     private Users user;
 
     public Factura() {
+        // deudaPendiente = deudaPendiente();
     }
 
-    public Factura(int idFactura, float montoPrestamo, String estadoFactura, String tipoTasa, float tasa, float tasaMoratoria, int plazoPago, LocalDate fechaFactura, float periodoTasa, float deudaPendiente, String responsableFactura, Users user) {
+    public Factura(int idFactura, float montoPrestamo, String estadoFactura, String tipoTasa, float tasa, float tasaMoratoria, int plazoPago, LocalDate fechaFactura, float periodoTasa, float deudaPendiente, String responsableFactura, int periodoActual, Users user) {
         this.idFactura = idFactura;
         this.montoPrestamo = montoPrestamo;
         this.estadoFactura = estadoFactura;
@@ -52,11 +55,66 @@ public class Factura {
         this.plazoPago = plazoPago;
         this.fechaFactura = fechaFactura;
         this.periodoTasa = periodoTasa;
-        this.deudaPendiente = deudaPendiente;
+        this.deudaPendiente = deudaPendiente+deudaPendiente();
         this.responsableFactura = responsableFactura;
+        this.periodoActual = periodoActual;
         this.user = user;
     }
 
+    //calculos
+    private float deudaPendiente(){
+        float deuda = 0;
+        switch (tipoTasa) {
+            case "Tasa de interes simple":
+                deuda = calcularTasaSimple();
+                break;
+            case "Tasa efectiva del periodo":
+                deuda = (float) calcularTasaEfectivaDelPerido();
+                break;
+            case "Anualidad simple adelantada":
+                deuda = (float) calcularAnualidad("Anualidad simple adelantada");
+                break;
+            case "Anualidad simple vencida":
+                deuda = (float) calcularAnualidad("Anualidad simple vencida");
+                break;
+        }
+        return deuda;
+    }
+
+    private float calcularTasaSimple(){
+        float r;
+        r = montoPrestamo*(1+(tasa/100))*plazoPago+0;
+        return r;
+    }
+    private double calcularTasaEfectivaDelPerido(){
+        double r;
+        double a=1+(tasa/100);
+        double b=plazoPago/periodoTasa;
+        r = montoPrestamo*Math.pow(a,b);
+        return r;
+    }
+
+    private double calcularAnualidad(String tipoAnualidad){
+        double ra =0;
+        double tipo = 0;
+        if (Objects.equals(tipoAnualidad, "Anualidad Simple adelantada")){
+            tipo = -1;
+        }
+
+        if (Objects.equals(tipoAnualidad, "Anualidad simple vencida")){
+            tipo = 0;
+        }
+
+        double  NperiodoRenta = Math.floor((double) plazoPago /7);
+        ra = montoPrestamo * (
+                ((tasa/100)*(Math.pow((1+(tasa/100)), NperiodoRenta-tipo)))/
+                        ((Math.pow((1+(tasa/100)),NperiodoRenta))-1)
+        );
+        return ra;
+    }
+
+
+    //getters and setters
     public int getIdFactura() {
         return idFactura;
     }
@@ -153,31 +211,11 @@ public class Factura {
         this.user = user;
     }
 
-    //calculos
-    private float calcularTasaSimple(){
-        float r;
-        r = montoPrestamo*(1+(tasa/100))*plazoPago+0;
-        return r;
-    }
-    private double calcularTasaEfectivaDelPerido(){
-        double r;
-        double a=1+(tasa/100);
-        double b=plazoPago/periodoTasa;
-        r = montoPrestamo*Math.pow(a,b);
-
-        return r;
+    public int getPeriodoActual() {
+        return periodoActual;
     }
 
-    private double calcularAnualidad(String tipoAnualidad){
-        if (Objects.equals(tipoAnualidad, "anualidadSimple")){}
-        double ra =0;
-        double  NperiodoRenta = Math.floor((double) plazoPago /7);
-        ra = montoPrestamo * (
-                ((tasa/100)*(Math.pow((1+(tasa/100)), NperiodoRenta-1)))/
-                        ((Math.pow((1+(tasa/100)),NperiodoRenta))-1)
-        );
-        return ra;
+    public void setPeriodoActual(int periodoActual) {
+        this.periodoActual = periodoActual;
     }
-
-
 }
