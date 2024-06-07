@@ -1,9 +1,7 @@
 package pe.edu.upc.finanzasv3.serviceinterface;
 
-import org.springframework.data.repository.query.Param;
-import pe.edu.upc.finanzasv3.dtos.ListaFacturaAminDTO;
-import pe.edu.upc.finanzasv3.entities.Cancelado;
 import pe.edu.upc.finanzasv3.entities.Factura;
+import pe.edu.upc.finanzasv3.entities.Users;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,4 +16,8 @@ public interface IFacturaService {
     public List<String[]> FiltroPorEstadolistarFacturaPersonalizadaCliente(Long idUsuario, String estado);
 
     public void insert(Factura factura);
+    public void delete(int id);
+    public List<Factura> ListFacturasByCliente(Long id);
+    public List<Factura> ListFacturas();
+    public Factura listId(int id);
 }

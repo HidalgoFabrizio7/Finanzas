@@ -7,7 +7,7 @@ public class UsuarioCompletoDTO {
     private String apellidoUsuario;
     private String correoUsuario;
     private String celularUsuario;
-    private Integer DNIUsuario;
+    private String DNIUsuario;
     private String direccionUsuario;
     private String nombreEmpresaUsuario;
     private String estadoUsuario;
@@ -47,11 +47,11 @@ public class UsuarioCompletoDTO {
         this.celularUsuario = celularUsuario;
     }
 
-    public Integer getDNIUsuario() {
+    public String getDNIUsuario() {
         return DNIUsuario;
     }
 
-    public void setDNIUsuario(Integer DNIUsuario) {
+    public void setDNIUsuario(String DNIUsuario) {
         this.DNIUsuario = DNIUsuario;
     }
 

@@ -40,6 +40,14 @@ public class Cancelado {
         this.factura = factura;
     }
 
+    public float getDeudaRestante() {
+        return deudaRestante;
+    }
+
+    public void setDeudaRestante(float deudaRestante) {
+        this.deudaRestante = deudaRestante;
+    }
+
     public int getIdCancelado() {
         return idCancelado;
     }

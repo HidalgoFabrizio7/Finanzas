@@ -30,7 +30,7 @@ public class Users {
     @Column(name ="celularUsuario", nullable = true, length = 45)
     private String celularUsuario;
     @Column(name ="DNIUsuario", nullable = true, length = 45)
-    private Integer DNIUsuario;
+    private String DNIUsuario;
     @Column(name ="direccionUsuario", nullable = true, length = 45)
     private String direccionUsuario;
     @Column(name ="estadoUsuario", nullable = true, length = 45)
@@ -43,7 +43,7 @@ public class Users {
     public Users() {
     }
 
-    public Users(Long id, String username, String password, Boolean enabled, String nombreUsuario, String apellidoUsuario, String nombreEmpresaUsuario, String correoUsuario, String celularUsuario, Integer DNIUsuario, String direccionUsuario, String estadoUsuario, List<Role> roles) {
+    public Users(Long id, String username, String password, Boolean enabled, String nombreUsuario, String apellidoUsuario, String nombreEmpresaUsuario, String correoUsuario, String celularUsuario, String DNIUsuario, String direccionUsuario, String estadoUsuario, List<Role> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -131,11 +131,11 @@ public class Users {
         this.celularUsuario = celularUsuario;
     }
 
-    public Integer getDNIUsuario() {
+    public String getDNIUsuario() {
         return DNIUsuario;
     }
 
-    public void setDNIUsuario(Integer DNIUsuario) {
+    public void setDNIUsuario(String DNIUsuario) {
         this.DNIUsuario = DNIUsuario;
     }
 

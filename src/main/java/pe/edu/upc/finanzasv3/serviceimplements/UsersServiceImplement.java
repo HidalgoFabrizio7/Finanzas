@@ -24,5 +24,19 @@ public class UsersServiceImplement implements IUsersService {
         userR.save(users);
     }
 
+    @Override
+    public void delete(Long id) {
+        userR.deleteById(id);
+    }
+
+    @Override
+    public Users listId(Long id) {
+        return userR.findById(id).orElse(new Users());
+    }
+
+    @Override
+    public void insRol(String authority, Long user_id) {
+        userR.insRol(authority, user_id);
+    }
 
 }
