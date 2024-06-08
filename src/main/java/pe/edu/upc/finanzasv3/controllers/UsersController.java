@@ -1,5 +1,6 @@
 package pe.edu.upc.finanzasv3.controllers;
 
+import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +23,10 @@ public class UsersController {
 
     //LISTAR CLIENTES
     @GetMapping
-    public List<ClienteDTO> ListCliente() {
+    public List<UsuarioCompletoDTO> ListClientes() {
         return usersS.ListCliente().stream().map(x->{
             ModelMapper m = new ModelMapper();
-            return m.map(x, ClienteDTO.class);
+            return m.map(x, UsuarioCompletoDTO.class);
         }).collect(Collectors.toList());
     }
     @PostMapping
@@ -34,4 +35,24 @@ public class UsersController {
         Users up = m.map(dto, Users.class);
         usersS.insert(up);
     }
+    @PutMapping
+    public void editar(@RequestBody UsuarioCompletoDTO usuarioDTO){
+        ModelMapper m = new ModelMapper();
+        Users g=m.map(usuarioDTO, Users.class);
+        usersS.insert(g);
+    }
+
+    @DeleteMapping("/{id}")
+    public void eliminar(@PathVariable("id") Long id){
+        usersS.delete(id);
+    }
+
+    @GetMapping("/{id}")
+    public UsuarioCompletoDTO listarId(@PathVariable("id") Long id){
+        ModelMapper m =new ModelMapper();
+        UsuarioCompletoDTO dto=m.map(usersS.listId(id), UsuarioCompletoDTO.class);
+        return dto;
+    }
+
+
 }
