@@ -42,7 +42,7 @@ public class Factura {
     private Users user;
 
     public Factura() {
-        // deudaPendiente = deudaPendiente();
+     //   deudaPendiente=deudaPendiente();
     }
 
     public Factura(int idFactura, float montoPrestamo, String estadoFactura, String tipoTasa, float tasa, float tasaMoratoria, int plazoPago, LocalDate fechaFactura, float periodoTasa, float deudaPendiente, String responsableFactura, int periodoActual, Users user) {
@@ -64,6 +64,7 @@ public class Factura {
     //calculos
     private float deudaPendiente(){
         float deuda = 0;
+        deuda = 3;
         switch (tipoTasa) {
             case "Tasa de interes simple":
                 deuda = calcularTasaSimple();

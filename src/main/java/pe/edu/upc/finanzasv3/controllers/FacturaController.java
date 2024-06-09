@@ -161,13 +161,14 @@ public class FacturaController {
         facturaS.insert(f);
     }
 
-    @GetMapping
-    public List<FacturaDTO> listarFacturas(){
+    /* @GetMapping
+    public List<FacturaDTO> listarFacturas() {
         return facturaS.ListFacturas().stream().map(y->{
             ModelMapper m = new ModelMapper();
             return m.map(y, FacturaDTO.class);
         }).collect(Collectors.toList());
     }
+    */
 
     @GetMapping
     public List<FacturaDTO> listarFacturasByCliente(@PathVariable("id") Long id){

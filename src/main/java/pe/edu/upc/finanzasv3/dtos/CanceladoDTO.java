@@ -1,6 +1,7 @@
 package pe.edu.upc.finanzasv3.dtos;
 
 import jakarta.persistence.Column;
+import pe.edu.upc.finanzasv3.entities.Factura;
 
 import java.time.LocalDate;
 
@@ -11,6 +12,7 @@ public class CanceladoDTO {
     private LocalDate fechaCancelado;
     private float interesMoratorio;
     private float deudaRestante;
+    private Factura factura;
 
     public int getIdCancelado() {
         return idCancelado;
@@ -58,5 +60,13 @@ public class CanceladoDTO {
 
     public void setDeudaRestante(float deudaRestante) {
         this.deudaRestante = deudaRestante;
+    }
+
+    public Factura getFactura() {
+        return factura;
+    }
+
+    public void setFactura(Factura factura) {
+        this.factura = factura;
     }
 }

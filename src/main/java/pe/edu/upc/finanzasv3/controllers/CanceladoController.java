@@ -35,14 +35,14 @@ public class CanceladoController {
 
     @GetMapping
     public List<CanceladoDTO>Listar(){
-        return cR.list().stream().map(y->{
+        return cR.list().stream().map(x->{
             ModelMapper m = new ModelMapper();
-            return m.map(y, CanceladoDTO.class);
+            return m.map(x, CanceladoDTO.class);
         }).collect(Collectors.toList());
     }
 
-    @GetMapping
-    public List<CanceladoDTO>ListarByFactura(@PathVariable int id){
+    @GetMapping("/listarporfactura/{id}")
+    public List<CanceladoDTO>ListarByFactura(@PathVariable("id") int id){
         return cR.listCanceladoByFactura(id).stream().map(y->{
             ModelMapper m = new ModelMapper();
             return m.map(y, CanceladoDTO.class);

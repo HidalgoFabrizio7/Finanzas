@@ -1,6 +1,7 @@
 package pe.edu.upc.finanzasv3.dtos;
 
 import jakarta.persistence.Column;
+import pe.edu.upc.finanzasv3.entities.Users;
 
 import java.time.LocalDate;
 
@@ -19,6 +20,7 @@ public class FacturaDTO {
     private float deudaPendiente;
     private int periodoActual;
     private String responsableFactura;
+    private Users user;
 
     public int getIdFactura() {
         return idFactura;
@@ -114,5 +116,13 @@ public class FacturaDTO {
 
     public void setResponsableFactura(String responsableFactura) {
         this.responsableFactura = responsableFactura;
+    }
+
+    public Users getUser() {
+        return user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
     }
 }
