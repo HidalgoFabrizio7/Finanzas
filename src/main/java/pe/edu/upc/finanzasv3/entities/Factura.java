@@ -42,7 +42,6 @@ public class Factura {
     private Users user;
 
     public Factura() {
-     //   deudaPendiente=deudaPendiente();
     }
 
     public Factura(int idFactura, float montoPrestamo, String estadoFactura, String tipoTasa, float tasa, float tasaMoratoria, int plazoPago, LocalDate fechaFactura, float periodoTasa, float deudaPendiente, String responsableFactura, int periodoActual, Users user) {
@@ -55,16 +54,15 @@ public class Factura {
         this.plazoPago = plazoPago;
         this.fechaFactura = fechaFactura;
         this.periodoTasa = periodoTasa;
-        this.deudaPendiente = deudaPendiente+deudaPendiente();
+        this.deudaPendiente = deudaPendiente;
         this.responsableFactura = responsableFactura;
         this.periodoActual = periodoActual;
         this.user = user;
     }
 
     //calculos
-    private float deudaPendiente(){
+    public float deudaPendiente(){
         float deuda = 0;
-        deuda = 3;
         switch (tipoTasa) {
             case "Tasa de interes simple":
                 deuda = calcularTasaSimple();
@@ -72,11 +70,8 @@ public class Factura {
             case "Tasa efectiva del periodo":
                 deuda = (float) calcularTasaEfectivaDelPerido();
                 break;
-            case "Anualidad simple adelantada":
-                deuda = (float) calcularAnualidad("Anualidad simple adelantada");
-                break;
-            case "Anualidad simple vencida":
-                deuda = (float) calcularAnualidad("Anualidad simple vencida");
+            case "Anualidad simple adelantada", "Anualidad simple vencida":
+                deuda = (float) calcularAnualidad();
                 break;
         }
         return deuda;
@@ -84,9 +79,11 @@ public class Factura {
 
     private float calcularTasaSimple(){
         float r;
-        r = montoPrestamo*(1+(tasa/100))*plazoPago+0;
+        float t = plazoPago/periodoTasa;
+        r = montoPrestamo*(1+((tasa/100)*t));
         return r;
     }
+
     private double calcularTasaEfectivaDelPerido(){
         double r;
         double a=1+(tasa/100);
@@ -95,22 +92,23 @@ public class Factura {
         return r;
     }
 
-    private double calcularAnualidad(String tipoAnualidad){
+    private double calcularAnualidad(){
         double ra =0;
-        double tipo = 0;
-        if (Objects.equals(tipoAnualidad, "Anualidad Simple adelantada")){
-            tipo = -1;
+        double tas = tasa/100;
+        int tipo = 0;
+        if (Objects.equals(tipoTasa, "Anualidad simple adelantada")){
+            tipo = 1;
         }
 
-        if (Objects.equals(tipoAnualidad, "Anualidad simple vencida")){
+        if (Objects.equals(tipoTasa, "Anualidad simple vencida")){
             tipo = 0;
         }
 
-        double  NperiodoRenta = Math.floor((double) plazoPago /7);
-        ra = montoPrestamo * (
-                ((tasa/100)*(Math.pow((1+(tasa/100)), NperiodoRenta-tipo)))/
-                        ((Math.pow((1+(tasa/100)),NperiodoRenta))-1)
-        );
+        double  NperiodoRenta = Math.floor((double) plazoPago /30);
+        periodoActual = (int) NperiodoRenta;
+
+        ra = montoPrestamo*( (tas * (Math.pow((1 + tas),NperiodoRenta-tipo)) /(((Math.pow((1 + tas),NperiodoRenta))-1))));
+
         return ra;
     }
 

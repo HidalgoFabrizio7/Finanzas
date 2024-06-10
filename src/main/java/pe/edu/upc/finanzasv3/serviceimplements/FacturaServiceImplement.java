@@ -49,6 +49,7 @@ public class FacturaServiceImplement implements IFacturaService {
 
     @Override
     public void insert(Factura factura) {
+        factura.setDeudaPendiente(factura.deudaPendiente());
         facturaR.save(factura);
     }
 
