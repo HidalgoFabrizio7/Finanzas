@@ -36,6 +36,8 @@ public class Factura {
     private int periodoActual;
     @Column(name = "responsableFactura", nullable = true, length = 45)
     private String responsableFactura;
+    @Column(name = "interesFactura", nullable = true)
+    private double interesFactura;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -44,7 +46,7 @@ public class Factura {
     public Factura() {
     }
 
-    public Factura(int idFactura, float montoPrestamo, String estadoFactura, String tipoTasa, float tasa, float tasaMoratoria, int plazoPago, LocalDate fechaFactura, float periodoTasa, float deudaPendiente, String responsableFactura, int periodoActual, Users user) {
+    public Factura(int idFactura, float montoPrestamo, String estadoFactura, String tipoTasa, float tasa, float tasaMoratoria, int plazoPago, LocalDate fechaFactura, float periodoTasa, float deudaPendiente, String responsableFactura, int periodoActual, double interesFactura, Users user) {
         this.idFactura = idFactura;
         this.montoPrestamo = montoPrestamo;
         this.estadoFactura = estadoFactura;
@@ -57,6 +59,7 @@ public class Factura {
         this.deudaPendiente = deudaPendiente;
         this.responsableFactura = responsableFactura;
         this.periodoActual = periodoActual;
+        this.interesFactura = interesFactura;
         this.user = user;
     }
 
@@ -66,14 +69,18 @@ public class Factura {
         switch (tipoTasa) {
             case "Tasa de interes simple":
                 deuda = calcularTasaSimple();
+                interesFactura = deuda-montoPrestamo;
                 break;
             case "Tasa efectiva del periodo":
                 deuda = (float) calcularTasaEfectivaDelPerido();
+                interesFactura = deuda-montoPrestamo;
                 break;
             case "Anualidad simple adelantada", "Anualidad simple vencida":
                 deuda = (float) calcularAnualidad();
+                interesFactura = (periodoActual*deudaPendiente)-montoPrestamo;
                 break;
         }
+        estadoFactura = "Pendiente";
         return deuda;
     }
 
@@ -104,7 +111,7 @@ public class Factura {
             tipo = 0;
         }
 
-        double  NperiodoRenta = Math.floor((double) plazoPago /30);
+        double  NperiodoRenta = Math.floor((double) plazoPago /7);
         periodoActual = (int) NperiodoRenta;
 
         ra = montoPrestamo*( (tas * (Math.pow((1 + tas),NperiodoRenta-tipo)) /(((Math.pow((1 + tas),NperiodoRenta))-1))));
@@ -216,5 +223,13 @@ public class Factura {
 
     public void setPeriodoActual(int periodoActual) {
         this.periodoActual = periodoActual;
+    }
+
+    public double getInteresFactura() {
+        return interesFactura;
+    }
+
+    public void setInteresFactura(double interesFactura) {
+        this.interesFactura = interesFactura;
     }
 }

@@ -3,7 +3,9 @@ package pe.edu.upc.finanzasv3.serviceimplements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pe.edu.upc.finanzasv3.entities.Cancelado;
+import pe.edu.upc.finanzasv3.entities.Factura;
 import pe.edu.upc.finanzasv3.repositories.ICanceladoRepository;
+import pe.edu.upc.finanzasv3.repositories.IFacturaRepository;
 import pe.edu.upc.finanzasv3.serviceinterface.ICanceladoService;
 
 import java.util.List;
@@ -12,9 +14,16 @@ import java.util.List;
 public class CanceladoServiceImplement implements ICanceladoService {
     @Autowired
     private ICanceladoRepository cR;
+    @Autowired
+    private FacturaServiceImplement fS;
 
     @Override
-    public void insert(Cancelado cancelado) {cR.save(cancelado);}
+    public void insert(Cancelado cancelado) {
+        Factura factura = fS.listId(cancelado.getFactura().getIdFactura());
+        cancelado.setFactura(factura);
+        cancelado.calcularDeuda();
+        cR.save(cancelado);
+    }
 
     @Override
     public List<Cancelado> list() {

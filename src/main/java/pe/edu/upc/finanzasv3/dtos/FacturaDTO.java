@@ -20,6 +20,7 @@ public class FacturaDTO {
     private float deudaPendiente;
     private int periodoActual;
     private String responsableFactura;
+    private double interesFactura;
     private Users user;
 
     public int getIdFactura() {
@@ -116,6 +117,14 @@ public class FacturaDTO {
 
     public void setResponsableFactura(String responsableFactura) {
         this.responsableFactura = responsableFactura;
+    }
+
+    public double getInteresFactura() {
+        return interesFactura;
+    }
+
+    public void setInteresFactura(double interesFactura) {
+        this.interesFactura = interesFactura;
     }
 
     public Users getUser() {

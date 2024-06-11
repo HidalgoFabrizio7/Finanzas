@@ -22,6 +22,7 @@ public class UsersServiceImplement implements IUsersService {
     @Override
     public void insert(Users users) {
         userR.save(users);
+        userR.insRol("CLIENTE",users.getId());
     }
 
     @Override

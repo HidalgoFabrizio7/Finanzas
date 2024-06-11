@@ -2,9 +2,11 @@ package pe.edu.upc.finanzasv3.entities;
 
 import jakarta.persistence.*;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Objects;
+import java.util.Optional;
 
 @Entity
 @Table(name = "Cancelado")
@@ -38,6 +40,91 @@ public class Cancelado {
         this.interesMoratorio = interesMoratorio;
         this.deudaRestante = deudaRestante;
         this.factura = factura;
+    }
+
+    //FUNCIONES
+    public int calcularDiasTranscurridos( ) {
+        int periodoo;
+        LocalDate fechaFactura = factura.getFechaFactura();
+        Period periodo = Period.between(fechaFactura, fechaCancelado);
+        periodoo = fechaCancelado.getDayOfMonth() + ((periodo.getMonths()*30)- fechaFactura.getDayOfMonth());
+        return periodoo;
+    }
+
+    public void calcularDeuda( ){
+
+        double capital = factura.getMontoPrestamo();
+        if (factura.getFechaFactura()==fechaCancelado){
+            montoCancelado = factura.getMontoPrestamo();
+            
+        }else {
+            factura.setEstadoFactura("Cancelado");
+        }
+
+        double tasa = factura.getTasa()/100;
+        double tasaM = factura.getTasaMoratoria()/100;
+        double tiempo = calcularDiasTranscurridos();
+        float deuda = factura.getDeudaPendiente();
+        float diferencia = (float) (factura.getPlazoPago()-tiempo);
+
+        switch (factura.getTipoTasa()) {
+            case "Tasa efectiva del periodo":
+                if (factura.getFechaFactura()!=fechaCancelado){
+                    deuda = (float) calcularTasaEfectivaDelPeriodo(capital,tasa,tiempo);
+                }
+                factura.setPeriodoActual(factura.getPeriodoActual()+1);
+                interes = (float) (deuda-capital);
+                break;
+            case "Tasa de interes simple":
+                factura.setPeriodoActual(factura.getPeriodoActual()+1);
+                interes = (float) factura.getInteresFactura();
+                break;
+
+            case "Anualidad simple adelantada", "Anualidad simple vencida":
+                factura.setPeriodoActual(factura.getPeriodoActual()-1);
+                deuda = (float) calcularTasaEfectivaDelPeriodo(capital,tasa,tiempo);
+                interes = (float) factura.getInteresFactura();
+                break;
+        }
+        if (diferencia<0) {
+            interesMoratorio = (float) calculoDeMora(capital, tasaM, tiempo);
+            deuda = deuda + (float) (calculoDeMora(capital, tasaM, tiempo));
+            factura.setEstadoFactura("Cancelacion Tardia");
+        }
+
+        deuda = deuda - montoCancelado;
+        factura.setDeudaPendiente(deuda);
+        deudaRestante = deuda;
+    }
+
+    /////////
+    private double calculoDeMora(double capital, double tasa, double tiempo){
+        double mora = 0;
+        double a = (1+(tasa));
+        double b = (tiempo-factura.getPlazoPago())/factura.getPeriodoTasa();
+        mora = capital*(Math.pow(a, b)-1);
+        return mora;
+    }
+    private double calcularTasaEfectivaDelPeriodo(double capital, double tasa, double tiempo){
+        double ra =0;
+        double a = 1+(tasa);
+        double b = tiempo/factura.getPeriodoTasa();
+        ra= capital*Math.pow(a,b);
+        return ra;
+    }
+
+    private double calcularAnualidadSimpleAdelantada(double capital, double tasa, double tiempo){
+        double ra =0;
+        double  NperiodoRenta = Math.floor(tiempo/7);
+        ra = capital * ((tasa*(Math.pow((1+tasa), NperiodoRenta-1)))/((Math.pow((1+tasa),tiempo))-1));
+        return ra;
+    }
+
+    private double calcularAnualidadSimpleVencida(double capital, double tasa, double tiempo){
+        double ra =0;
+        double  NperiodoRenta = Math.floor(tiempo/7);
+        ra = capital * ((tasa*(Math.pow((1+tasa), NperiodoRenta)))/((Math.pow((1+tasa),tiempo))-1));
+        return ra;
     }
 
     public float getDeudaRestante() {
@@ -94,69 +181,6 @@ public class Cancelado {
 
     public void setFactura(Factura factura) {
         this.factura = factura;
-    }
-
-    //FUNCIONES
-    public int calcularDiasTranscurridos() {
-        LocalDate fechaFactura = factura.getFechaFactura();
-        if (fechaFactura == null || fechaCancelado == null) {
-            return 0; //  caso en que las fechas son nulas
-        }
-        Period periodo = Period.between(fechaFactura, fechaCancelado);
-        return periodo.getDays();
-    }
-
-    private void calcularDeuda(){
-        double capital = factura.getMontoPrestamo();
-        double tasa = factura.getTasa()/100;
-        double tasaM = factura.getTasaMoratoria()/100;
-        double tiempo = calcularDiasTranscurridos();
-        float deuda = factura.getDeudaPendiente();
-        if ((factura.getPlazoPago()-calcularDiasTranscurridos())<0) {
-            deuda = deuda + (float) (calculoDeMora(capital, tasaM, tiempo));
-        }else {
-            if (Objects.equals(factura.getTipoTasa(), "Tasa efectiva del periodo")){
-                deuda = (float) calcularTasaEfectivaDelPeriodo(capital, tasa, tiempo);
-            }
-        }
-        if (Objects.equals(factura.getTipoTasa(), "Anualidad simple adelantada")||
-                Objects.equals(factura.getTipoTasa(), "Anualidad simple vencida")){
-            factura.setPeriodoActual(factura.getPeriodoActual()+1);
-        }
-        factura.setDeudaPendiente(deuda);
-        deuda = deuda - montoCancelado;
-        deudaRestante = deuda;
-    }
-
-    /////////
-    private double calculoDeMora(double capital, double tasa, double tiempo){
-        double mora = 0;
-        double a = (1+(tasa));
-        double b = (tiempo-factura.getPlazoPago())/factura.getPeriodoTasa();
-        mora = capital*(Math.pow(a, b)-1);
-        return mora;
-    }
-
-    private double calcularTasaEfectivaDelPeriodo(double capital, double tasa, double tiempo){
-        double r;
-        double a = (1+(tasa));
-        double b = tiempo/factura.getPeriodoTasa();
-        r = capital*(Math.pow(a, b)-1);
-        return r;
-    }
-
-    private double calcularAnualidadSimpleAdelantada(double capital, double tasa, double tiempo){
-        double ra =0;
-        double  NperiodoRenta = Math.floor(tiempo/7);
-        ra = capital * ((tasa*(Math.pow((1+tasa), NperiodoRenta-1)))/((Math.pow((1+tasa),tiempo))-1));
-        return ra;
-    }
-
-    private double calcularAnualidadSimpleVencida(double capital, double tasa, double tiempo){
-        double ra =0;
-        double  NperiodoRenta = Math.floor(tiempo/7);
-        ra = capital * ((tasa*(Math.pow((1+tasa), NperiodoRenta)))/((Math.pow((1+tasa),tiempo))-1));
-        return ra;
     }
 
 }

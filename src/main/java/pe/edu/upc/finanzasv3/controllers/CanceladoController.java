@@ -9,6 +9,7 @@ import pe.edu.upc.finanzasv3.dtos.UsuarioCompletoDTO;
 import pe.edu.upc.finanzasv3.entities.Cancelado;
 import pe.edu.upc.finanzasv3.repositories.ICanceladoRepository;
 import pe.edu.upc.finanzasv3.serviceinterface.ICanceladoService;
+import pe.edu.upc.finanzasv3.serviceinterface.IFacturaService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
 public class CanceladoController {
     @Autowired
     private ICanceladoService cR;
+    @Autowired
+    private IFacturaService facturaS;
     
     @PostMapping
     public void registrar(@RequestBody CanceladoDTO dto) {
