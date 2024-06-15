@@ -28,7 +28,7 @@ public class JwtAuthenticationController {
     private JwtUserDetailsService userDetailsService;
 
 
-    @PostMapping("/login")//---------------------------HU20: Iniciar Sesion
+    @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest req) throws Exception {
         authenticate(req.getUsername(), req.getPassword());
         final UserDetails userDetails = userDetailsService.loadUserByUsername(req.getUsername());

@@ -68,11 +68,14 @@ public class FacturaServiceImplement implements IFacturaService {
             cancelado.setFactura(factura);
             cancelado.setFechaCancelado(factura.getFechaFactura());
             cancelado.setMontoCancelado(factura.getDeudaPendiente());
+            cancelado.setPlazoLimite(factura.getPlazoPago());
             if (Objects.equals(factura.getTipoTasa(), "Anualidad simple adelantada")||
                     Objects.equals(factura.getTipoTasa(), "Anualidad simple vencida")){
                 int temp = 7*(i+1);
                 cancelado.setPlazoLimite(temp);
+                cancelado.setDeudaRestante(factura.getDeudaPendiente());
             }
+            cancelado.setDeudaRestante(factura.getDeudaPendiente());
             cR.insert(cancelado);
         }
     }

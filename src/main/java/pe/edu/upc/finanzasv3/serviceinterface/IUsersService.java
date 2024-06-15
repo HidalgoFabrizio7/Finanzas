@@ -12,4 +12,5 @@ public interface IUsersService {
     public void delete(Long id);
     public Users listId(Long id);
     public void insRol(String authority, Long user_id);
+    public Boolean existeNombre(String username);
 }

@@ -1,19 +1,31 @@
 package pe.edu.upc.finanzasv3.dtos;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
+import pe.edu.upc.finanzasv3.entities.Role;
+
+import java.util.List;
 
 public class UsuarioCompletoDTO {
+    private Long id;
+    private String username;
+    private String password;
+    private Boolean enabled;
     private String nombreUsuario;
     private String apellidoUsuario;
+    private String nombreEmpresaUsuario;
     private String correoUsuario;
     private String celularUsuario;
     private String DNIUsuario;
     private String direccionUsuario;
-    private String nombreEmpresaUsuario;
     private String estadoUsuario;
-    private String username;
-    private String password;
-    private Boolean enabled;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getNombreUsuario() {
         return nombreUsuario;

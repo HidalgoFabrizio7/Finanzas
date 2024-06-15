@@ -40,4 +40,9 @@ public class UsersServiceImplement implements IUsersService {
         userR.insRol(authority, user_id);
     }
 
+    @Override
+    public Boolean existeNombre(String username) {
+        return userR.existsByUsername(username);
+    }
+
 }

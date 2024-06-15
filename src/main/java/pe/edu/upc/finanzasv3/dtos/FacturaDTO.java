@@ -1,6 +1,8 @@
 package pe.edu.upc.finanzasv3.dtos;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import pe.edu.upc.finanzasv3.entities.Users;
 
 import java.time.LocalDate;

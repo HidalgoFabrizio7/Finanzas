@@ -21,6 +21,7 @@ public class CanceladoServiceImplement implements ICanceladoService {
         cR.save(cancelado);
     }
 
+
     @Override
     public List<Cancelado> list() {
         return cR.findAll();

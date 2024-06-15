@@ -27,4 +27,5 @@ public interface IUserRepository extends JpaRepository<Users, Long> {
     public void insRol(@Param("rol") String authority, @Param("user_id") Long user_id);
 
     public Users findByUsername(String username);
+    public Boolean existsByUsername(String username);
 }
