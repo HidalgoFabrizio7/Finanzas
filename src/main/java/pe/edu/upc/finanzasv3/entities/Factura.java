@@ -70,14 +70,16 @@ public class Factura {
             case "Tasa de interes simple":
                 deuda = calcularTasaSimple();
                 interesFactura = deuda-montoPrestamo;
+                setPeriodoActual(1);
                 break;
             case "Tasa efectiva del periodo":
                 deuda = (float) calcularTasaEfectivaDelPerido();
                 interesFactura = deuda-montoPrestamo;
+                setPeriodoActual(1);
                 break;
             case "Anualidad simple adelantada", "Anualidad simple vencida":
                 deuda = (float) calcularAnualidad();
-                interesFactura = (periodoActual*deudaPendiente)-montoPrestamo;
+                interesFactura = deuda - (montoPrestamo/periodoActual);
                 break;
         }
         estadoFactura = "Pendiente";
@@ -112,7 +114,8 @@ public class Factura {
         }
 
         double  NperiodoRenta = Math.floor((double) plazoPago /7);
-        periodoActual = (int) NperiodoRenta;
+
+        setPeriodoActual((int) NperiodoRenta);
 
         ra = montoPrestamo*( (tas * (Math.pow((1 + tas),NperiodoRenta-tipo)) /(((Math.pow((1 + tas),NperiodoRenta))-1))));
 

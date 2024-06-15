@@ -14,13 +14,9 @@ import java.util.List;
 public class CanceladoServiceImplement implements ICanceladoService {
     @Autowired
     private ICanceladoRepository cR;
-    @Autowired
-    private FacturaServiceImplement fS;
 
     @Override
     public void insert(Cancelado cancelado) {
-        Factura factura = fS.listId(cancelado.getFactura().getIdFactura());
-        cancelado.setFactura(factura);
         cancelado.calcularDeuda();
         cR.save(cancelado);
     }

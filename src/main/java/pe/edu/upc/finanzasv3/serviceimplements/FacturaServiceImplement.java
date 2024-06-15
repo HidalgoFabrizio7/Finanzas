@@ -2,18 +2,28 @@ package pe.edu.upc.finanzasv3.serviceimplements;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pe.edu.upc.finanzasv3.entities.Cancelado;
 import pe.edu.upc.finanzasv3.entities.Factura;
 import pe.edu.upc.finanzasv3.entities.Users;
+import pe.edu.upc.finanzasv3.repositories.ICanceladoRepository;
 import pe.edu.upc.finanzasv3.repositories.IFacturaRepository;
+import pe.edu.upc.finanzasv3.serviceinterface.ICanceladoService;
 import pe.edu.upc.finanzasv3.serviceinterface.IFacturaService;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class FacturaServiceImplement implements IFacturaService {
     @Autowired
     private IFacturaRepository facturaR;
+    @Autowired
+    private ICanceladoRepository canceladoR;
+    @Autowired
+    private ICanceladoService cR;
+
 
     @Override
     public List<String[]> listarFacturaPersonalizadaAdmin() {
@@ -51,6 +61,20 @@ public class FacturaServiceImplement implements IFacturaService {
     public void insert(Factura factura) {
         factura.setDeudaPendiente(factura.deudaPendiente());
         facturaR.save(factura);
+
+
+        for (int i = 0; i < factura.getPeriodoActual(); i++) {
+            Cancelado cancelado = new Cancelado();
+            cancelado.setFactura(factura);
+            cancelado.setFechaCancelado(factura.getFechaFactura());
+            cancelado.setMontoCancelado(factura.getDeudaPendiente());
+            if (Objects.equals(factura.getTipoTasa(), "Anualidad simple adelantada")||
+                    Objects.equals(factura.getTipoTasa(), "Anualidad simple vencida")){
+                int temp = 7*(i+1);
+                cancelado.setPlazoLimite(temp);
+            }
+            cR.insert(cancelado);
+        }
     }
 
     @Override

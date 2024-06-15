@@ -24,6 +24,8 @@ public class Cancelado {
     private float interesMoratorio;
     @Column(name = "deudaRestante", nullable = true  )
     private float deudaRestante;
+    @Column (name = "plazoLimite", nullable = true  )
+    private int plazoLimite;
 
     @ManyToOne
     @JoinColumn(name = "idFactura")
@@ -52,38 +54,31 @@ public class Cancelado {
     }
 
     public void calcularDeuda( ){
-
         double capital = factura.getMontoPrestamo();
-        if (factura.getFechaFactura()==fechaCancelado){
-            montoCancelado = factura.getMontoPrestamo();
-            
-        }else {
-            factura.setEstadoFactura("Cancelado");
-        }
-
         double tasa = factura.getTasa()/100;
         double tasaM = factura.getTasaMoratoria()/100;
         double tiempo = calcularDiasTranscurridos();
         float deuda = factura.getDeudaPendiente();
         float diferencia = (float) (factura.getPlazoPago()-tiempo);
 
-        switch (factura.getTipoTasa()) {
+        if (factura.getFechaFactura()!=fechaCancelado){
+            factura.setEstadoFactura("Cancelado");
+        }
+
+        switch (factura.getTipoTasa() ) {
             case "Tasa efectiva del periodo":
-                if (factura.getFechaFactura()!=fechaCancelado){
+                if (factura.getFechaFactura()!=fechaCancelado ){
                     deuda = (float) calcularTasaEfectivaDelPeriodo(capital,tasa,tiempo);
                 }
-                factura.setPeriodoActual(factura.getPeriodoActual()+1);
                 interes = (float) (deuda-capital);
                 break;
             case "Tasa de interes simple":
-                factura.setPeriodoActual(factura.getPeriodoActual()+1);
                 interes = (float) factura.getInteresFactura();
                 break;
 
             case "Anualidad simple adelantada", "Anualidad simple vencida":
-                factura.setPeriodoActual(factura.getPeriodoActual()-1);
-                deuda = (float) calcularTasaEfectivaDelPeriodo(capital,tasa,tiempo);
                 interes = (float) factura.getInteresFactura();
+                diferencia = (float) (plazoLimite-tiempo);
                 break;
         }
         if (diferencia<0) {
@@ -93,7 +88,6 @@ public class Cancelado {
         }
 
         deuda = deuda - montoCancelado;
-        factura.setDeudaPendiente(deuda);
         deudaRestante = deuda;
     }
 
@@ -113,18 +107,12 @@ public class Cancelado {
         return ra;
     }
 
-    private double calcularAnualidadSimpleAdelantada(double capital, double tasa, double tiempo){
-        double ra =0;
-        double  NperiodoRenta = Math.floor(tiempo/7);
-        ra = capital * ((tasa*(Math.pow((1+tasa), NperiodoRenta-1)))/((Math.pow((1+tasa),tiempo))-1));
-        return ra;
+    public int getPlazoLimite() {
+        return plazoLimite;
     }
 
-    private double calcularAnualidadSimpleVencida(double capital, double tasa, double tiempo){
-        double ra =0;
-        double  NperiodoRenta = Math.floor(tiempo/7);
-        ra = capital * ((tasa*(Math.pow((1+tasa), NperiodoRenta)))/((Math.pow((1+tasa),tiempo))-1));
-        return ra;
+    public void setPlazoLimite(int plazoLimite) {
+        this.plazoLimite = plazoLimite;
     }
 
     public float getDeudaRestante() {
