@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "roles", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "rol"})})
-public class Role implements Serializable {
+public class Role {
     private static final long serialVersion = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

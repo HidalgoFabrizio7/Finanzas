@@ -4,6 +4,7 @@ import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.upc.finanzasv3.dtos.ClienteDTO;
@@ -45,13 +46,13 @@ public class UsersController {
     public void editar(@RequestBody UsuarioCompletoDTO usuarioDTO){
         ModelMapper m = new ModelMapper();
         Users g=m.map(usuarioDTO, Users.class);
-        String encodedPassword = passwordEncoder.encode(g.getPassword());
-        g.setPassword(encodedPassword);
         usersS.insert(g);
     }
 
+
+    //@PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable("id") Long id){
+    public void delete(@PathVariable("id") Long id){
         usersS.delete(id);
     }
 
