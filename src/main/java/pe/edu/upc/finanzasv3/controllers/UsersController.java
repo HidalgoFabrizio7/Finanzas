@@ -34,6 +34,7 @@ public class UsersController {
             return m.map(x, UsuarioCompletoDTO.class);
         }).collect(Collectors.toList());
     }
+
     @PostMapping
     public void registrar(@RequestBody UsuarioCompletoDTO dto) {
         ModelMapper m = new ModelMapper();
@@ -43,13 +44,13 @@ public class UsersController {
         usersS.insertRol("CLIENTE", up.getId());
         usersS.insert(up);
     }
+
     @PutMapping
     public void editar(@RequestBody UsuarioCompletoDTO usuarioDTO){
         ModelMapper m = new ModelMapper();
         Users g=m.map(usuarioDTO, Users.class);
         usersS.insert(g);
     }
-
 
     //@PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
@@ -69,6 +70,5 @@ public class UsersController {
         boolean exits = usersS.existeNombre(username);
         return ResponseEntity.ok(exits);
     }
-
 
 }
