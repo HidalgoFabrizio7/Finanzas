@@ -22,7 +22,6 @@ public class UsersServiceImplement implements IUsersService {
     @Override
     public void insert(Users users) {
         userR.save(users);
-        userR.insRol("CLIENTE",users.getId());
     }
 
     @Override
@@ -43,6 +42,11 @@ public class UsersServiceImplement implements IUsersService {
     @Override
     public Boolean existeNombre(String username) {
         return userR.existsByUsername(username);
+    }
+
+    @Override
+    public void insertRol(String rol, Long id) {
+        userR.insRol(rol, id);
     }
 
 }

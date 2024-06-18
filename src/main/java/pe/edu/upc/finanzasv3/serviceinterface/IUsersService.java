@@ -13,4 +13,5 @@ public interface IUsersService {
     public Users listId(Long id);
     public void insRol(String authority, Long user_id);
     public Boolean existeNombre(String username);
+    public  void insertRol(String rol, Long id);
 }
