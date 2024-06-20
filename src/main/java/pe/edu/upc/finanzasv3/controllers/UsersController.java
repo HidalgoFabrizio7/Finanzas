@@ -41,8 +41,8 @@ public class UsersController {
         Users up = m.map(dto, Users.class);
         String encodedPassword = passwordEncoder.encode(up.getPassword());
         up.setPassword(encodedPassword);
-        usersS.insertRol("CLIENTE", up.getId());
         usersS.insert(up);
+        usersS.insertRol("CLIENTE", up.getId());
     }
 
     @PutMapping
