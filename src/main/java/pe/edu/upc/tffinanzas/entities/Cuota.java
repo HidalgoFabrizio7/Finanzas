@@ -23,7 +23,8 @@ public class Cuota {
     private double deudaRestante;
     @Column (name = "plazoLimite", nullable = true  )
     private int plazoLimite;
-
+    @Column (name = "plazodegracia", nullable = true  )
+    private String plazodegracia;
     @ManyToOne
     @JoinColumn(name = "idFactura")
     private Factura factura;
@@ -31,7 +32,7 @@ public class Cuota {
     public Cuota() {
     }
 
-    public Cuota(int idCuota, double montoCancelado, double interes, LocalDate fechaCancelado, double interesMoratorio, double deudaRestante, int plazoLimite, Factura factura) {
+    public Cuota(int idCuota, double montoCancelado, double interes, LocalDate fechaCancelado, double interesMoratorio, double deudaRestante, int plazoLimite, String plazodegracia, Factura factura) {
         this.idCuota = idCuota;
         this.montoCancelado = montoCancelado;
         this.interes = interes;
@@ -39,6 +40,7 @@ public class Cuota {
         this.interesMoratorio = interesMoratorio;
         this.deudaRestante = deudaRestante;
         this.plazoLimite = plazoLimite;
+        this.plazodegracia = plazodegracia;
         this.factura = factura;
     }
 
@@ -106,6 +108,14 @@ public class Cuota {
         this.factura = factura;
     }
 
+    public String getPlazodegracia() {
+        return plazodegracia;
+    }
+
+    public void setPlazodegracia(String plazodegracia) {
+        this.plazodegracia = plazodegracia;
+    }
+
     //Calculos
     public int calcularDiasTranscurridos( ) {
         int periodoo;
@@ -139,8 +149,15 @@ public class Cuota {
                 break;
 
             case "Anualidad simple adelantada", "Anualidad simple vencida":
-                interes = factura.getInteresFactura();
-                diferencia = (plazoLimite-tiempo);
+                switch (getPlazodegracia()){
+                    case "Plazo total":
+                        montoCancelado = 0;
+                        break;
+                    case "NA":
+                        interes = factura.getInteresFactura();
+                        diferencia = (plazoLimite-tiempo);
+                        break;
+                }
                 break;
         }
         if (diferencia<0) {

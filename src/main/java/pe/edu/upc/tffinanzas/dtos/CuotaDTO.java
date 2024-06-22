@@ -15,6 +15,16 @@ public class CuotaDTO {
     private double interesMoratorio;
     private double deudaRestante;
     private int plazoLimite;
+    private String plazodegracia;
+
+    public String getPlazodegracia() {
+        return plazodegracia;
+    }
+
+    public void setPlazodegracia(String plazodegracia) {
+        this.plazodegracia = plazodegracia;
+    }
+
     private Factura factura;
 
     public int getIdCuota() {
